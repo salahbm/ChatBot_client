@@ -1,19 +1,18 @@
 // @ts-nocheck
 'use client';
-import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 import ChatBot, { Step } from 'react-simple-chatbot';
 import { ThemeProvider } from 'styled-components';
+import { useToast } from '../ui/use-toast';
 
 interface UserDetails {
   name: string;
   email: string;
   phone: string;
   marketingRequirement: string;
-  salesDepartment: string;
-  socialMediaDetails?: string;
-  seoDetails?: string;
-  emailMarketingDetails?: string;
-  contentMarketingDetails?: string;
+  desiredService: string;
+  salesDepAgreement: string;
 }
 
 interface Option {
@@ -34,15 +33,27 @@ const theme = {
   userFontColor: '#4a4a4a',
 };
 
-const Chatbot: React.FC<{ toggle: any }> = ({ toggle }) => {
+const Chatbot = ({ toggle }) => {
   const [userDetails, setUserDetails] = useState<UserDetails>({
     name: '',
     email: '',
     phone: '',
     marketingRequirement: '',
-    salesDepartment: '',
+    desiredService: '',
+    salesDepAgreement: 'yes',
   });
-  console.log(`userDetails:`, userDetails);
+
+  const router = useRouter();
+  const { toast } = useToast();
+
+  // Function to handle user choices
+  const handleChoice = (label: string) => {
+    // Update the userDetails state with the chosen label
+    setUserDetails((prevUserDetails) => ({
+      ...prevUserDetails,
+      salesDepAgreement: label,
+    }));
+  };
 
   const steps: Step[] = [
     {
@@ -73,7 +84,7 @@ const Chatbot: React.FC<{ toggle: any }> = ({ toggle }) => {
     },
     {
       id: '4',
-      message: `Thanks ${userDetails.name}! What is your email address?`,
+      message: 'Thanks {previousValue}! What is your email address?',
       trigger: '5',
     },
     {
@@ -154,6 +165,18 @@ const Chatbot: React.FC<{ toggle: any }> = ({ toggle }) => {
       id: 'get_social_media_details',
       user: true,
       trigger: '10',
+      validator: (value: string) => {
+        if (!value || value.trim() === '') {
+          return 'Please provide a valid name.';
+        } else {
+          setUserDetails((prevUserDetails) => ({
+            ...prevUserDetails,
+            desiredService: value,
+            marketingRequirement: 'social_media',
+          }));
+          return true;
+        }
+      },
     },
     {
       id: '10',
@@ -171,12 +194,14 @@ const Chatbot: React.FC<{ toggle: any }> = ({ toggle }) => {
     {
       id: 'connect_to_sales',
       message: 'Great choice! Please wait while we connect you to an agent.',
+      trigger: () => handleChoice('Yes'),
       end: true,
     },
     {
       id: 'goodbye_message',
       message:
         'Thank you for considering our services. If you have any more questions in the future, feel free to reach out. Have a great day!',
+      trigger: () => handleChoice('No'),
       end: true,
     },
     // SEO
@@ -190,6 +215,18 @@ const Chatbot: React.FC<{ toggle: any }> = ({ toggle }) => {
       id: 'get_seo_details',
       user: true,
       trigger: '12',
+      validator: (value: string) => {
+        if (!value || value.trim() === '') {
+          return 'Please provide a valid name.';
+        } else {
+          setUserDetails((prevUserDetails) => ({
+            ...prevUserDetails,
+            desiredService: value,
+            marketingRequirement: 'SEO',
+          }));
+          return true;
+        }
+      },
     },
     {
       id: '12',
@@ -207,12 +244,14 @@ const Chatbot: React.FC<{ toggle: any }> = ({ toggle }) => {
     {
       id: 'connect_to_sales',
       message: 'Great choice! Please wait while we connect you to an agent.',
+      trigger: () => handleChoice('Yes'),
       end: true,
     },
     {
       id: 'goodbye_message',
       message:
         'Thank you for considering our services. If you have any more questions in the future, feel free to reach out. Have a great day!',
+      trigger: () => handleChoice('No'),
       end: true,
     },
     // Email Marketing
@@ -226,6 +265,18 @@ const Chatbot: React.FC<{ toggle: any }> = ({ toggle }) => {
       id: 'get_email_marketing_details',
       user: true,
       trigger: '14',
+      validator: (value: string) => {
+        if (!value || value.trim() === '') {
+          return 'Please provide a valid name.';
+        } else {
+          setUserDetails((prevUserDetails) => ({
+            ...prevUserDetails,
+            desiredService: value,
+            marketingRequirement: 'email_marketing',
+          }));
+          return true;
+        }
+      },
     },
     {
       id: '14',
@@ -243,12 +294,14 @@ const Chatbot: React.FC<{ toggle: any }> = ({ toggle }) => {
     {
       id: 'connect_to_sales',
       message: 'Great choice! Please wait while we connect you to an agent.',
+      trigger: () => handleChoice('Yes'),
       end: true,
     },
     {
       id: 'goodbye_message',
       message:
         'Thank you for considering our services. If you have any more questions in the future, feel free to reach out. Have a great day!',
+      trigger: () => handleChoice('No'),
       end: true,
     },
     // Content Marketing
@@ -262,6 +315,18 @@ const Chatbot: React.FC<{ toggle: any }> = ({ toggle }) => {
       id: 'get_content_marketing_details',
       user: true,
       trigger: '16',
+      validator: (value: string) => {
+        if (!value || value.trim() === '') {
+          return 'Please provide a valid name.';
+        } else {
+          setUserDetails((prevUserDetails) => ({
+            ...prevUserDetails,
+            desiredService: value,
+            marketingRequirement: 'content_marketing',
+          }));
+          return true;
+        }
+      },
     },
     {
       id: '16',
@@ -279,6 +344,7 @@ const Chatbot: React.FC<{ toggle: any }> = ({ toggle }) => {
     {
       id: 'connect_to_sales',
       message: 'Great choice! Please wait while we connect you to an agent.',
+      trigger: () => handleChoice('Yes'),
       end: true,
     },
     {
@@ -286,10 +352,40 @@ const Chatbot: React.FC<{ toggle: any }> = ({ toggle }) => {
       message:
         'Thank you for considering our services. If you have any more questions in the future, feel free to reach out. Have a great day!',
       end: true,
-      trigger: () => toggle(),
+      trigger: () => handleChoice('No'),
     },
   ];
+  useEffect(() => {
+    async function fetchUserData() {
+      if (userDetails.desiredService !== '') {
+        console.log('Fetching user data starting...');
 
+        toggle();
+        const response = await fetch(`/api/create-user`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(userDetails),
+        });
+        console.log(`response:`, response);
+
+        const data = await response.json();
+        console.log(`data:`, data);
+
+        // Handle successful response
+
+        console.log('data is  successfully returned');
+        toast({
+          title: 'We will reach you soon!',
+        });
+        if (data) {
+          router.refresh();
+        }
+      }
+    }
+    fetchUserData();
+  }, [userDetails.desiredService]);
   return (
     <ThemeProvider theme={theme}>
       <ChatBot steps={steps} />

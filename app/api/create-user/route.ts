@@ -4,14 +4,28 @@ export async function POST(request: Request) {
     console.log(`body:`, body);
 
     if (body && 'email' in body && 'password' in body) {
-      const { email, password } = body;
+      const {
+        name,
+        email,
+        phone,
+        marketingRequirement,
+        desiredService,
+        salesDepAgreement,
+      } = body;
 
-      const response = await fetch('http://127.0.0.1:8000/user/storeUser/', {
+      const response = await fetch('http://127.0.0.1:8000/user/UserAPIView', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          marketingRequirement,
+          desiredService,
+          salesDepAgreement,
+        }),
       });
 
       if (response.ok) {
