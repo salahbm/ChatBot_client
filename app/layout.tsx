@@ -26,7 +26,7 @@ export default async function RootLayout({
     <html lang="en">
       <body className={poppins.className}>
         <AuthProvider session={session}>
-          <main className="max-w-[1440px] mx-auto h-screen bg-orange-200">
+          <main className="max-w-[1440px] mx-auto h-screen bg-orange-100">
             <Navbar />
             {children}
             <Footer />
