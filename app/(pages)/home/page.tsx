@@ -1,4 +1,4 @@
-import ChatBot from '@/components/home/Chatbot';
+import ChatContainer from '@/components/home/Container';
 import Contact from '@/components/home/contact';
 import Hero from '@/components/home/hero';
 import NewsView from '@/components/home/news-letter';
@@ -10,7 +10,7 @@ const Home = () => {
       <Hero />
       <Contact />
       <NewsView />
-      {/* <ChatBot /> */}
+      <ChatContainer />
     </>
   );
 };

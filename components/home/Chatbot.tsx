@@ -1,74 +1,300 @@
+// @ts-nocheck
 'use client';
 import React, { useState } from 'react';
+import ChatBot, { Step } from 'react-simple-chatbot';
+import { ThemeProvider } from 'styled-components';
 
-const ChatBot = () => {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
+interface UserDetails {
+  name: string;
+  email: string;
+  phone: string;
+  marketingRequirement: string;
+  salesDepartment: string;
+  socialMediaDetails?: string;
+  seoDetails?: string;
+  emailMarketingDetails?: string;
+  contentMarketingDetails?: string;
+}
 
-  const handleInputChange = (e) => {
-    setInput(e.target.value);
-  };
+interface Option {
+  value: string;
+  label: string;
+  trigger: string;
+}
 
-  const handleSendMessage = () => {
-    if (input.trim() === '') {
-      return;
-    }
+const theme = {
+  background: '#f5f8fb',
+  fontFamily: 'Helvetica Neue',
+  headerBgColor: '#EF9C00',
+  headerFontColor: '#fff',
+  headerFontSize: '15px',
+  botBubbleColor: '#EF9C00',
+  botFontColor: '#fff',
+  userBubbleColor: '#fff',
+  userFontColor: '#4a4a4a',
+};
 
-    // Update state with the new message
-    setMessages([...messages, { text: input, user: true }]);
+const Chatbot: React.FC<{ toggle: any }> = ({ toggle }) => {
+  const [userDetails, setUserDetails] = useState<UserDetails>({
+    name: '',
+    email: '',
+    phone: '',
+    marketingRequirement: '',
+    salesDepartment: '',
+  });
+  console.log(`userDetails:`, userDetails);
 
-    // Clear the input field
-    setInput('');
-  };
+  const steps: Step[] = [
+    {
+      id: '1',
+      message: "Hello! I'm your assistant.",
+      trigger: '2',
+    },
+    {
+      id: '2',
+      message: 'To better assist you, may I have your name?',
+      trigger: '3',
+    },
+    {
+      id: '3',
+      user: true,
+      trigger: '4',
+      validator: (value: string) => {
+        if (!value || value.trim() === '') {
+          return 'Please provide a valid name.';
+        } else {
+          setUserDetails((prevUserDetails) => ({
+            ...prevUserDetails,
+            name: value,
+          }));
+          return true;
+        }
+      },
+    },
+    {
+      id: '4',
+      message: `Thanks ${userDetails.name}! What is your email address?`,
+      trigger: '5',
+    },
+    {
+      id: '5',
+      user: true,
+      trigger: '6',
+      validator: (value: string) => {
+        if (!value || !/^\S+@\S+\.\S+$/.test(value)) {
+          return 'Oops! It seems like you\'ve entered an invalid email. Please provide a valid email address.';
+        } else {
+          setUserDetails((prevUserDetails) => ({
+            ...prevUserDetails,
+            email: value,
+          }));
+          return true;
+        }
+      },
+    },
+    {
+      id: '6',
+      message: 'Great! Lastly, can you share your phone number with us?',
+      trigger: '7',
+    },
+    {
+      id: '7',
+      user: true,
+      trigger: '8',
+      validator: (value: string) => {
+        if (!value || !/^\d{10}$/.test(value)) {
+          return 'Oops! It seems like you\'ve entered an invalid phone number. Please provide a valid phone number.';
+        } else {
+          setUserDetails((prevUserDetails) => ({
+            ...prevUserDetails,
+            phone: value,
+          }));
+          return true;
+        }
+      },
+    },
+    {
+      id: '8',
+      message: `Excellent, ${userDetails.name}! Now, could you tell us what your primary marketing requirement is?`,
+      trigger: 'marketing_requirement_options',
+    },
+    {
+      id: 'marketing_requirement_options',
+      options: ([
+        {
+          value: 'social_media',
+          label: 'Social Media Marketing',
+          trigger: 'social_media_question',
+        },
+        {
+          value: 'seo',
+          label: 'Search Engine Optimization (SEO)',
+          trigger: 'seo_question',
+        },
+        {
+          value: 'email_marketing',
+          label: 'Email Marketing',
+          trigger: 'email_marketing_question',
+        },
+        {
+          value: 'content_marketing',
+          label: 'Content Marketing',
+          trigger: 'content_marketing_question',
+        },
+      ] as unknown) as Option[],
+    },
+    // Social Media Marketing
+    {
+      id: 'social_media_question',
+      message:
+        'Fantastic! Social Media Marketing is a powerful tool. How can we specifically assist you with it?',
+      trigger: 'get_social_media_details',
+    },
+    {
+      id: 'get_social_media_details',
+      user: true,
+      trigger: '10',
+    },
+    {
+      id: '10',
+      message:
+        "Lastly, would you like to talk to our sales department? Please reply with 'Yes' or 'No'.",
+      trigger: 'sales_department_options',
+    },
+    {
+      id: 'sales_department_options',
+      options: [
+        { value: 'Yes', label: 'Yes', trigger: 'connect_to_sales' },
+        { value: 'No', label: 'No', trigger: 'goodbye_message' },
+      ] as Option[],
+    },
+    {
+      id: 'connect_to_sales',
+      message: 'Great choice! Please wait while we connect you to an agent.',
+      end: true,
+    },
+    {
+      id: 'goodbye_message',
+      message:
+        'Thank you for considering our services. If you have any more questions in the future, feel free to reach out. Have a great day!',
+      end: true,
+    },
+    // SEO
+    {
+      id: 'seo_question',
+      message:
+        'Awesome! SEO is crucial for online visibility. What specifically are you looking to achieve with SEO?',
+      trigger: 'get_seo_details',
+    },
+    {
+      id: 'get_seo_details',
+      user: true,
+      trigger: '12',
+    },
+    {
+      id: '12',
+      message:
+        "Lastly, would you like to talk to our sales department? Please reply with 'Yes' or 'No'.",
+      trigger: 'sales_department_options',
+    },
+    {
+      id: 'sales_department_options',
+      options: [
+        { value: 'Yes', label: 'Yes', trigger: 'connect_to_sales' },
+        { value: 'No', label: 'No', trigger: 'goodbye_message' },
+      ] as Option[],
+    },
+    {
+      id: 'connect_to_sales',
+      message: 'Great choice! Please wait while we connect you to an agent.',
+      end: true,
+    },
+    {
+      id: 'goodbye_message',
+      message:
+        'Thank you for considering our services. If you have any more questions in the future, feel free to reach out. Have a great day!',
+      end: true,
+    },
+    // Email Marketing
+    {
+      id: 'email_marketing_question',
+      message:
+        'Terrific! Email Marketing is a great way to connect. What are your specific goals with email marketing?',
+      trigger: 'get_email_marketing_details',
+    },
+    {
+      id: 'get_email_marketing_details',
+      user: true,
+      trigger: '14',
+    },
+    {
+      id: '14',
+      message:
+        "Lastly, would you like to talk to our sales department? Please reply with 'Yes' or 'No'.",
+      trigger: 'sales_department_options',
+    },
+    {
+      id: 'sales_department_options',
+      options: [
+        { value: 'Yes', label: 'Yes', trigger: 'connect_to_sales' },
+        { value: 'No', label: 'No', trigger: 'goodbye_message' },
+      ] as Option[],
+    },
+    {
+      id: 'connect_to_sales',
+      message: 'Great choice! Please wait while we connect you to an agent.',
+      end: true,
+    },
+    {
+      id: 'goodbye_message',
+      message:
+        'Thank you for considering our services. If you have any more questions in the future, feel free to reach out. Have a great day!',
+      end: true,
+    },
+    // Content Marketing
+    {
+      id: 'content_marketing_question',
+      message:
+        'Wonderful! Content Marketing is key. What kind of content are you focusing on?',
+      trigger: 'get_content_marketing_details',
+    },
+    {
+      id: 'get_content_marketing_details',
+      user: true,
+      trigger: '16',
+    },
+    {
+      id: '16',
+      message:
+        "Lastly, would you like to talk to our sales department? Please reply with 'Yes' or 'No'.",
+      trigger: 'sales_department_options',
+    },
+    {
+      id: 'sales_department_options',
+      options: [
+        { value: 'Yes', label: 'Yes', trigger: 'connect_to_sales' },
+        { value: 'No', label: 'No', trigger: 'goodbye_message' },
+      ] as Option[],
+    },
+    {
+      id: 'connect_to_sales',
+      message: 'Great choice! Please wait while we connect you to an agent.',
+      end: true,
+    },
+    {
+      id: 'goodbye_message',
+      message:
+        'Thank you for considering our services. If you have any more questions in the future, feel free to reach out. Have a great day!',
+      end: true,
+      trigger: () => toggle(),
+    },
+  ];
 
   return (
-    <div className="flex flex-col flex-grow w-full max-w-xl bg-white shadow-xl rounded-lg overflow-hidden">
-      <div className="flex flex-col flex-grow h-0 p-4 overflow-auto">
-        {messages.map((message, index) => (
-          <div
-            key={index}
-            className={`flex w-full mt-2 space-x-3 max-w-xs ${
-              message.user ? 'ml-auto justify-end' : ''
-            }`}
-          >
-            <div>
-              <div
-                className={`${
-                  message.user
-                    ? 'bg-blue-600 text-white rounded-l-lg rounded-br-lg'
-                    : 'bg-gray-300 rounded-r-lg rounded-bl-lg'
-                } p-3`}
-              >
-                <p className="text-sm">{message.text}</p>
-              </div>
-              <span className="text-xs text-gray-500 leading-none">
-                2 min ago
-              </span>
-            </div>
-            {!message.user && (
-              <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300"></div>
-            )}
-          </div>
-        ))}
-      </div>
-
-      <div className="bg-gray-300 p-4">
-        <input
-          className="flex items-center h-10 w-full rounded px-3 text-sm"
-          type="text"
-          placeholder="Type your message…"
-          value={input}
-          onChange={handleInputChange}
-        />
-        <button
-          className="ml-2 px-4 py-2 bg-blue-600 text-white rounded"
-          onClick={handleSendMessage}
-        >
-          Send
-        </button>
-      </div>
-    </div>
+    <ThemeProvider theme={theme}>
+      <ChatBot steps={steps} />
+    </ThemeProvider>
   );
 };
 
-export default ChatBot;
+export default Chatbot;

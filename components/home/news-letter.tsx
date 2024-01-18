@@ -2,7 +2,7 @@ import React from 'react';
 
 const NewsView = () => {
   return (
-    <section className="flex items-center bg-orange-100 font-poppins pb-2 ">
+    <section className="flex items-center bg-orange-100 font-poppins py-2 ">
       <div className="justify-center flex-1 mx-auto max-w-7xl ">
         <div className="px-4 py-4 mx-4 bg-orange-50 rounded-md shadow md:p-10 dark:bg-gray-900">
           <div className="flex flex-wrap items-center ">
