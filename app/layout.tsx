@@ -5,6 +5,7 @@ import { getServerSession } from 'next-auth';
 import AuthProvider from '@/context/SessionProvider';
 import Navbar from '@/components/shared/Navbar';
 import Footer from '@/components/shared/Footer';
+import { Toaster } from '@/components/ui/toaster';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -29,6 +30,7 @@ export default async function RootLayout({
           <main className="max-w-[1440px] mx-auto h-screen bg-orange-100">
             <Navbar />
             {children}
+            <Toaster />
             <Footer />
           </main>
         </AuthProvider>

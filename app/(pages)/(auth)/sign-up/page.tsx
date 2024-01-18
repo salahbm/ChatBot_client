@@ -17,14 +17,16 @@ import { Input } from '@/components/ui/input';
 import { formSchemaSignUp } from '@/lib/validation';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useToast } from '@/components/ui/use-toast';
 
 const SignUp = () => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchemaSignUp>>({
     resolver: zodResolver(formSchemaSignUp),
     defaultValues: {
-      username: '',
+      email: '',
       password: '',
       passwordConfirm: '',
     },
@@ -32,16 +34,47 @@ const SignUp = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchemaSignUp> | any) => {
     try {
-      // Create a new user
-      console.log(`values:`, values);
       setIsLoading(true);
 
-      console.log('User created successfully');
+      const response = await fetch('/api/backend', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+
+        // Handle successful response
+        setIsLoading(false);
+        toast({
+          title: 'Account created!',
+        });
+        if (data) {
+          router.push('/sign-in');
+        }
+      } else {
+        console.error('API error:', response.status);
+        toast({
+          variant: 'destructive',
+          title: 'API error:',
+          description: response.status,
+        });
+      }
     } catch (error: any) {
-      console.error('Error creating user:', error.message);
+      console.error('Error:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Error in Creating Account',
+        description: error.message,
+      });
+    } finally {
       setIsLoading(false);
     }
   };
+
   const onInvalid = (errors: any) => console.error(errors);
 
   return (
@@ -70,15 +103,15 @@ const SignUp = () => {
             </p>
             <FormField
               control={form.control}
-              name="username"
+              name="email"
               render={({ field }: any) => {
                 return (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="John Wick"
-                        type="username"
+                        placeholder="chatbot@gmail.com"
+                        type="email"
                         {...field}
                       />
                     </FormControl>
