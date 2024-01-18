@@ -355,7 +355,6 @@ const Chatbot = ({ toggle }: any) => {
 
   useEffect(() => {
     async function fetchUserData() {
-      toggle();
       const response = await fetch(`/api/create-user`, {
         method: 'POST',
         headers: {
@@ -364,24 +363,29 @@ const Chatbot = ({ toggle }: any) => {
         body: JSON.stringify(userDetails),
       });
 
-      await response.json();
-
-      // Handle successful response
+      // Check if the response is ok before trying to parse JSON
       if (response.ok) {
+        const data = await response.json();
+
+        // Handle successful response
         toast({
           title: 'We will reach you soon!',
         });
+
         setTimeout(() => {
           toggle();
         }, 1500);
       }
     }
+
     if (userDetails.desiredService) {
+      // If desiredService is truthy, call fetchUserData
       setTimeout(() => {
         fetchUserData();
       }, 1500);
     }
   }, [userDetails.desiredService]);
+
   return (
     <ThemeProvider theme={theme}>
       <ChatBot steps={steps} />
