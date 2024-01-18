@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 import React, { useEffect, useState } from 'react';
 import ChatBot, { Step } from 'react-simple-chatbot';
@@ -32,7 +31,7 @@ const theme = {
   userFontColor: '#4a4a4a',
 };
 
-const Chatbot = ({ toggle }) => {
+const Chatbot = ({ toggle }: any) => {
   const [userDetails, setUserDetails] = useState<UserDetails>({
     name: '',
     email: '',
@@ -53,7 +52,7 @@ const Chatbot = ({ toggle }) => {
     }));
   };
 
-  const steps: Step[] = [
+  const steps: any[] = [
     {
       id: '1',
       message: "Hello! I'm your assistant.",
@@ -353,35 +352,35 @@ const Chatbot = ({ toggle }) => {
       trigger: () => handleChoice('No'),
     },
   ];
+
   useEffect(() => {
-    if (userDetails.desiredService) {
-      async function fetchUserData() {
-        toggle();
-        const response = await fetch(`/api/create-user`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(userDetails),
+    async function fetchUserData() {
+      toggle();
+      const response = await fetch(`/api/create-user`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userDetails),
+      });
+
+      await response.json();
+
+      // Handle successful response
+      if (response.ok) {
+        toast({
+          title: 'We will reach you soon!',
         });
-
-        await response.json();
-
-        // Handle successful response
-        if (response.ok) {
-          toast({
-            title: 'We will reach you soon!',
-          });
-          setTimeout(() => {
-            toggle();
-          }, 1500);
-        }
+        setTimeout(() => {
+          toggle();
+        }, 1500);
       }
     }
-
-    setTimeout(() => {
-      fetchUserData();
-    }, 1500);
+    if (userDetails.desiredService) {
+      setTimeout(() => {
+        fetchUserData();
+      }, 1500);
+    }
   }, [userDetails.desiredService]);
   return (
     <ThemeProvider theme={theme}>
