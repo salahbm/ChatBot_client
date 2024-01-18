@@ -2,7 +2,7 @@
 import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
 
 const Navbar = () => {
   const { data: session }: any = useSession();
@@ -18,20 +18,27 @@ const Navbar = () => {
           />
 
           <p className="nav-logo">
-            Naver<span className="text-primary">Place</span>
+            Chat<span className="text-primary">Bot</span>
           </p>
         </Link>
 
         <div className="flex-between">
           {!session ? (
             <Link href="/pages/sign-in">
-              <Image
-                src="/assets/icons/user.svg"
-                alt="user icon"
-                width={28}
-                height={28}
-                className="object-contain"
-              />
+              <Button
+                className="mx-1 text-neutral-600"
+                type="button"
+                variant={'outline'}
+              >
+                Login
+                <Image
+                  src="/assets/icons/user.svg"
+                  alt="user icon"
+                  width={24}
+                  height={24}
+                  className="object-contain"
+                />
+              </Button>
             </Link>
           ) : (
             <div className="flex-center">
