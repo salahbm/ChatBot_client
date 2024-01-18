@@ -35,13 +35,16 @@ const SignUp = () => {
   const onSubmit = async (values: z.infer<typeof formSchemaSignUp> | any) => {
     try {
       setIsLoading(true);
-
-      const response = await fetch('/api/backend', {
+      const valuesToSend = {
+        email: values.email,
+        password: values.password,
+      };
+      const response = await fetch(`/api/create-user`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(valuesToSend),
       });
 
       if (response.ok) {

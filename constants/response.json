@@ -1,0 +1,16 @@
+{
+  "welcomeMessage": "Hello! I'm your assistant. How can I assist you today?",
+  "nameQuestion": "To better assist you, may I have your name?",
+  "invalidEmailMessage": "Oops! It seems like you've entered an invalid email. Please provide a valid email address.",
+  "emailQuestion": "Thanks [User's Name]! What is your email address?",
+  "invalidPhoneMessage": "Oops! It seems like you've entered an invalid phone number. Please provide a valid phone number.",
+  "phoneQuestion": "Great! Lastly, can you share your phone number with us?",
+  "marketingQuestion": "Excellent, [User's Name]! Now, could you tell us what your primary marketing requirement is?",
+  "socialMediaResponse": "Fantastic! Social Media Marketing is a powerful tool. How can we specifically assist you with it?",
+  "seoResponse": "Awesome! SEO is crucial for online visibility. What specifically are you looking to achieve with SEO?",
+  "emailMarketingResponse": "Terrific! Email Marketing is a great way to connect. What are your specific goals with email marketing?",
+  "contentMarketingResponse": "Wonderful! Content Marketing is key. What kind of content are you focusing on?",
+  "salesQuestion": "Lastly, would you like to talk to our sales department? Please reply with 'Yes' or 'No'.",
+  "salesYesResponse": "Great choice! Please wait while we connect you to an agent.",
+  "salesNoResponse": "Thank you for considering our services. If you have any more questions in the future, feel free to reach out. Have a great day!"
+}
