@@ -1,6 +1,5 @@
 // @ts-nocheck
 'use client';
-import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import ChatBot, { Step } from 'react-simple-chatbot';
 import { ThemeProvider } from 'styled-components';
@@ -43,7 +42,6 @@ const Chatbot = ({ toggle }) => {
     salesDepAgreement: 'yes',
   });
 
-  const router = useRouter();
   const { toast } = useToast();
 
   // Function to handle user choices
@@ -356,10 +354,8 @@ const Chatbot = ({ toggle }) => {
     },
   ];
   useEffect(() => {
-    async function fetchUserData() {
-      if (userDetails.desiredService !== '') {
-        console.log('Fetching user data starting...');
-
+    if (userDetails.desiredService) {
+      async function fetchUserData() {
         toggle();
         const response = await fetch(`/api/create-user`, {
           method: 'POST',
@@ -368,25 +364,24 @@ const Chatbot = ({ toggle }) => {
           },
           body: JSON.stringify(userDetails),
         });
-        console.log(`response:`, response);
 
-        const data = await response.json();
-        console.log(`data:`, data);
+        await response.json();
 
         // Handle successful response
-
-        console.log('data is  successfully returned');
-        toast({
-          title: 'We will reach you soon!',
-        });
-        if (data) {
+        if (response.ok) {
+          toast({
+            title: 'We will reach you soon!',
+          });
           setTimeout(() => {
             toggle();
           }, 1500);
         }
       }
     }
-    fetchUserData();
+
+    setTimeout(() => {
+      fetchUserData();
+    }, 1500);
   }, [userDetails.desiredService]);
   return (
     <ThemeProvider theme={theme}>

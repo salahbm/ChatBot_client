@@ -2,17 +2,7 @@
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    console.log(`body:`, body);
 
-    // if (
-    //   body &&
-    //   'name' in body &&
-    //   'email' in body &&
-    //   'phone' in body &&
-    //   'marketingRequirement' in body &&
-    //   'desiredService' in body &&
-    //   'salesDepAgreement' in body
-    // ) {
     const {
       name,
       email,
@@ -55,11 +45,6 @@ export async function POST(request: Request) {
         status: response.status,
       });
     }
-    // } else {
-    //   return new Response(JSON.stringify({ error: 'Invalid Request' }), {
-    //     status: 400,
-    //   });
-    // }
   } catch (error) {
     console.error('Error:', error);
     return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
