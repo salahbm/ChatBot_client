@@ -380,7 +380,9 @@ const Chatbot = ({ toggle }) => {
           title: 'We will reach you soon!',
         });
         if (data) {
-          router.refresh();
+          setTimeout(() => {
+            toggle();
+          }, 1500);
         }
       }
     }
