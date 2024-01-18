@@ -1,9 +1,9 @@
-"use client";
-import React, { useEffect } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { Button } from "@/components/ui/button";
+'use client';
+import React, { useEffect } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -11,13 +11,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { formSchemaSignIn } from "@/lib/validation";
-import Link from "next/link";
-import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { formSchemaSignIn } from '@/lib/validation';
+import Link from 'next/link';
+import { signIn, useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 const SingIn = () => {
   const router = useRouter();
@@ -25,38 +25,38 @@ const SingIn = () => {
   const form = useForm<z.infer<typeof formSchemaSignIn>>({
     resolver: zodResolver(formSchemaSignIn),
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchemaSignIn>) => {
-    const res = await signIn("credentials", {
+    const res = await signIn('credentials', {
       redirect: false,
       email: values.email,
       password: values.password,
     });
     if (res?.error) {
-      alert("Invalid email or password");
+      alert('Invalid email or password');
     }
-    if (res?.url) router.replace("/");
+    if (res?.url) router.replace('/');
   };
 
   useEffect(() => {
-    if (session?.status === "authenticated") {
-      router.replace("/");
+    if (session?.status === 'authenticated') {
+      router.replace('/');
     }
   }, [session, router]);
   return (
-    <main className="flex  md:justify-between flex-col md:flex-row justify-center">
+    <main className="flex  md:justify-between flex-col md:flex-row justify-center h-screen">
       {/* Image */}
 
       <Image
-        width={2000}
-        height={2000}
-        src="/assets/images/banner/banner-1.jpg"
+        width={500}
+        height={500}
+        src="/assets/images/signIn.svg"
         alt="Log In banner"
-        className=" md:max-h-full max-h-[450px] object-cover md:w-1/2"
+        className=" md:max-h-full max-h-[450px] object-cover md:w-1/2 self-center"
       />
       <div className=" flex-center justify-between flex-col p-2 md:w-1/2">
         <Form {...form}>
@@ -64,8 +64,10 @@ const SingIn = () => {
             onSubmit={form.handleSubmit(onSubmit)}
             className="flex flex-col gap-5 w-full mt-4"
           >
-     <h2 className="font-bold pt-5 sm:pt-8 text-amber-500 text-lg font-serif">Log In Account</h2>
-     <p className="text-light-3 small-medium md:base-regular text-neutral-600 text-lg font-serif font-semibold">
+            <h2 className="font-bold pt-5 sm:pt-8 text-amber-500 text-lg font-serif">
+              Log In Account
+            </h2>
+            <p className="text-light-3 small-medium md:base-regular text-neutral-600 text-lg font-serif font-semibold">
               Please Sign in to continue your journey
             </p>
             <FormField
@@ -77,7 +79,7 @@ const SingIn = () => {
                     <FormLabel>Your Email</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="joniandco@gmail.com"
+                        placeholder="chatbot@gmail.com"
                         type="email"
                         {...field}
                       />
@@ -113,27 +115,11 @@ const SingIn = () => {
           </form>
         </Form>
         <p className="mt-2 ">
-          Don't have account?{" "}
-          <Link href={"./sign-up"} className="text-blue-500 font-bold">
+          Don't have account?{' '}
+          <Link href={'./sign-up'} className="text-amber-500 font-bold">
             Sign up
           </Link>
         </p>
-        <Button
-          className="text-white"
-          type="button"
-          variant={"default"}
-          onClick={() => signIn("github")}
-        >
-          Sign In with Github
-        </Button>
-        <Button
-          className="text-white m-1"
-          type="button"
-          variant={"default"}
-          onClick={() => signIn("google")}
-        >
-          Sign In with Google
-        </Button>
       </div>
     </main>
   );

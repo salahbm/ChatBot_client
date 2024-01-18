@@ -24,7 +24,7 @@ const Navbar = () => {
 
         <div className="flex-between">
           {!session ? (
-            <Link href="/pages/sign-in">
+            <Link href="/sign-in">
               <Button
                 className="mx-1 text-neutral-600"
                 type="button"
