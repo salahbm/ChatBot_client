@@ -4,6 +4,7 @@ import './globals.css';
 import { getServerSession } from 'next-auth';
 import AuthProvider from '@/context/SessionProvider';
 import Navbar from '@/components/shared/Navbar';
+import Footer from '@/components/shared/Footer';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -23,12 +24,15 @@ export default async function RootLayout({
   const session = await getServerSession();
   return (
     <html lang="en">
-      <AuthProvider session={session}>
-        <body className={poppins.className}>
-          <Navbar />
-          {children}
-        </body>
-      </AuthProvider>
+      <body className={poppins.className}>
+        <AuthProvider session={session}>
+          <main className="max-w-[1440px] mx-auto h-screen">
+            <Navbar />
+            {children}
+            <Footer />
+          </main>
+        </AuthProvider>
+      </body>
     </html>
   );
 }
