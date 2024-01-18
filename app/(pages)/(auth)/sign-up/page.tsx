@@ -33,10 +33,8 @@ const SignUp = () => {
   const onSubmit = async (values: z.infer<typeof formSchemaSignUp> | any) => {
     try {
       // Create a new user
+      console.log(`values:`, values);
       setIsLoading(true);
-
-      router.push('/pages/sign-in');
-      setIsLoading(false);
 
       console.log('User created successfully');
     } catch (error: any) {
@@ -135,7 +133,7 @@ const SignUp = () => {
         </Form>
         <p className=" text-start mt-2 ">
           Don't have account ?{' '}
-          <Link href={'./sign-in'} className="text-blue-500 font-bold">
+          <Link href={'./sign-in'} className="text-amber-500 font-bold">
             Sign In
           </Link>
         </p>
