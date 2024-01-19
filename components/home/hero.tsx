@@ -21,7 +21,11 @@ const Hero: React.FC = () => {
               Get Started
             </Button>
           </Link>
-          <Link rel="noopener" href="/" target="_blank">
+          <Link
+            rel="noopener"
+            href="https://github.com/salahbm/ChatBot_client"
+            target="_blank"
+          >
             <Button type="button" variant={'outline'}>
               View Repo
             </Button>
