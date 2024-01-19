@@ -31,7 +31,7 @@ const theme = {
   userFontColor: '#4a4a4a',
 };
 
-const Chatbot = ({ toggle }: any) => {
+const Chatbot = () => {
   const [userDetails, setUserDetails] = useState<UserDetails>({
     name: '',
     email: '',
@@ -371,10 +371,6 @@ const Chatbot = ({ toggle }: any) => {
         toast({
           title: 'We will reach you soon!',
         });
-
-        setTimeout(() => {
-          toggle();
-        }, 1500);
       }
     }
 
