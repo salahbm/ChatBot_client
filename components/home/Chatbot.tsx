@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import ChatBot from 'react-simple-chatbot';
 import { ThemeProvider } from 'styled-components';
-import { useToast, reducer } from '../ui/use-toast';
+import { useToast } from '../ui/use-toast';
 
 interface UserDetails {
   name: string;
@@ -27,7 +27,7 @@ const theme = {
 
 const Chatbot = () => {
   const [steps, setSteps] = useState([]);
-
+  console.log(`steps:`, steps);
   const [userDetails, setUserDetails] = useState<UserDetails>({
     name: '',
     email: '',
@@ -63,6 +63,7 @@ const Chatbot = () => {
     }
   };
 
+  // get user response from chatbot
   function handleEnd(steps: any) {
     setUserDetails((prevUserDetails) => ({
       ...prevUserDetails,
@@ -75,228 +76,63 @@ const Chatbot = () => {
     }));
   }
 
-  const step = [
-    {
-      id: '1',
-      message: "Hello! I'm your assistant.",
-      trigger: '2',
-    },
-    {
-      id: '2',
-      message: 'To better assist you, may I have your name?',
-      trigger: '3',
-    },
-    {
-      id: '3',
-      user: true,
-      trigger: '4',
-      validator: (value: string) => {
-        const result = isValidName(value);
-        return result;
-      },
-    },
-    {
-      id: '4',
-      message: 'Thanks {previousValue}! What is your email address?',
-      trigger: '5',
-    },
-    {
-      id: '5',
-      user: true,
-      trigger: '6',
-      validator: (value: string) => {
-        const result = isValidEmail(value);
-        return result;
-      },
-    },
-    {
-      id: '6',
-      message: 'Great! Lastly, can you share your phone number with us?',
-      trigger: '7',
-    },
-    {
-      id: '7',
-      user: true,
-      trigger: '8',
-      validator: (value: string) => {
-        const result = isValidPhone(value);
-        return result;
-      },
-    },
-    {
-      id: '8',
-      message: `Excellent, ${userDetails.name}! Now, could you tell us what your primary marketing requirement is?`,
-      trigger: '9',
-    },
-    {
-      id: '9',
-      options: [
-        {
-          value: 'social_media',
-          label: 'Social Media Marketing',
-          trigger: '10',
-        },
-        {
-          value: 'seo',
-          label: 'Search Engine Optimization (SEO)',
-          trigger: '11',
-        },
-        {
-          value: 'email_marketing',
-          label: 'Email Marketing',
-          trigger: '12',
-        },
-        {
-          value: 'content_marketing',
-          label: 'Content Marketing',
-          trigger: '13',
-        },
-      ],
-    },
-    {
-      id: '10',
-      message:
-        'Fantastic! Social Media Marketing is a powerful tool. How can we specifically assist you with it?',
-      trigger: '14',
-    },
-    {
-      id: '14',
-      user: true,
-      trigger: '15',
-    },
-    {
-      id: '15',
-      message:
-        "Lastly, would you like to talk to our sales department? Please reply with 'Yes' or 'No'.",
-      trigger: '16',
-    },
-    {
-      id: '16',
-      options: [
-        { value: 'Yes', label: 'Yes', trigger: '17' },
-        { value: 'No', label: 'No', trigger: '18' },
-      ],
-    },
-    {
-      id: '17',
-      message: 'Great choice! Please wait while we connect you to an agent.',
+  //  pass the validation
+  const constructSteps = (data: any) => {
+    return data.map((item: any) => {
+      if (item.validator) {
+        const validatorMap: Record<string, (value: string) => any> = {
+          '3': isValidName,
+          '5': isValidEmail,
+          '7': isValidPhone,
+        };
 
-      end: true,
-    },
-    {
-      id: '18',
-      message:
-        'Thank you for considering our services. If you have any more questions in the future, feel free to reach out. Have a great day!',
-      end: true,
-    },
-    {
-      id: '11',
-      message:
-        'Awesome! SEO is crucial for online visibility. What specifically are you looking to achieve with SEO?',
-      trigger: '19',
-    },
-    {
-      id: '19',
-      user: true,
-      trigger: '20',
-    },
-    {
-      id: '20',
-      message:
-        "Lastly, would you like to talk to our sales department? Please reply with 'Yes' or 'No'.",
-      trigger: '21',
-    },
-    {
-      id: '21',
-      options: [
-        { value: 'Yes', label: 'Yes', trigger: '22' },
-        { value: 'No', label: 'No', trigger: '23' },
-      ],
-    },
-    {
-      id: '22',
-      message: 'Great choice! Please wait while we connect you to an agent.',
-      end: true,
-    },
-    {
-      id: '23',
-      message:
-        'Thank you for considering our services. If you have any more questions in the future, feel free to reach out. Have a great day!',
-      end: true,
-    },
-    {
-      id: '12',
-      message:
-        'Terrific! Email Marketing is a great way to connect. What are your specific goals with email marketing?',
-      trigger: '24',
-    },
-    {
-      id: '24',
-      user: true,
-      trigger: '25',
-    },
-    {
-      id: '25',
-      message:
-        "Lastly, would you like to talk to our sales department? Please reply with 'Yes' or 'No'.",
-      trigger: '26',
-    },
-    {
-      id: '26',
-      options: [
-        { value: 'Yes', label: 'Yes', trigger: '27' },
-        { value: 'No', label: 'No', trigger: '28' },
-      ],
-    },
-    {
-      id: '27',
-      message: 'Great choice! Please wait while we connect you to an agent.',
-      end: true,
-    },
-    {
-      id: '28',
-      message:
-        'Thank you for considering our services. If you have any more questions in the future, feel free to reach out. Have a great day!',
-      end: true,
-    },
-    {
-      id: '13',
-      message:
-        'Wonderful! Content Marketing is key. What kind of content are you focusing on?',
-      trigger: '29',
-    },
-    {
-      id: '29',
-      user: true,
-      trigger: '30',
-    },
-    {
-      id: '30',
-      message:
-        "Lastly, would you like to talk to our sales department? Please reply with 'Yes' or 'No'.",
-      trigger: '31',
-    },
-    {
-      id: '31',
-      options: [
-        { value: 'Yes', label: 'Yes', trigger: '32' },
-        { value: 'No', label: 'No', trigger: '33' },
-      ],
-    },
-    {
-      id: '32',
-      message: 'Great choice! Please wait while we connect you to an agent.',
-      end: true,
-    },
-    {
-      id: '33',
-      message:
-        'Thank you for considering our services. If you have any more questions in the future, feel free to reach out. Have a great day!',
-      end: true,
-    },
-  ];
+        if (item.id in validatorMap) {
+          item.validator = validatorMap[item.id];
+        }
+      }
 
+      return item;
+    });
+  };
+
+  // remove empty steps
+
+  const removeFalseOrNullValues = (data: any) => {
+    return data.map((item: boolean) => {
+      // Use Object.entries to filter out properties with values of false or null
+      const filteredItem = Object.fromEntries(
+        Object.entries(item).filter(
+          ([key, value]) => value !== false && value !== null
+        )
+      );
+
+      return filteredItem;
+    });
+  };
+
+  // get  steps from backend
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch data from your own API route
+        const response = await fetch('/api/chatbot-steps');
+        const result = await response.json();
+        const filteredResult = await constructSteps(result.data);
+        const removedUndefinedValues = await removeFalseOrNullValues(
+          filteredResult
+        );
+        setSteps(removedUndefinedValues);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // store user response
+  useEffect(() => {
+    console.log(`userDetails:`, userDetails);
     async function fetchUserData() {
       const response = await fetch(`/api/create-user`, {
         method: 'POST',
@@ -321,44 +157,17 @@ const Chatbot = () => {
       fetchUserData();
     }
   }, [userDetails.salesDepAgreement]);
-
-  async function removeInvalidItems(response: any) {
-    console.log(`response:`, response.data);
-
-    return response.data.filter((item: any) => {
-      for (const key in item) {
-        if (item[key] === false || item[key] === null) {
-          return false;
-        }
-      }
-      return true;
-    });
-  }
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch data from your own API route
-        const response = await fetch('/api/chatbot-steps');
-        const result = await response.json();
-        const filteredResult = await removeInvalidItems(result);
-
-        console.log(`filteredResult:`, filteredResult);
-        const ids = result.data.map((item) => item);
-        console.log(ids);
-        setSteps(filteredResult);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
   return (
-    <ThemeProvider theme={theme}>
-      <ChatBot steps={step} handleEnd={(steps: string[]) => handleEnd(steps)} />
-    </ThemeProvider>
+    <>
+      {steps.length != 0 && (
+        <ThemeProvider theme={theme}>
+          <ChatBot
+            steps={steps}
+            handleEnd={(steps: string[]) => handleEnd(steps)}
+          />
+        </ThemeProvider>
+      )}
+    </>
   );
 };
 

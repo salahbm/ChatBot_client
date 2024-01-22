@@ -1,6 +1,6 @@
 // ChatContainer.tsx
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Bot, XOctagon } from 'lucide-react';
 import Chatbot from './Chatbot';
 
