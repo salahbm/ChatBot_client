@@ -27,7 +27,6 @@ const theme = {
 
 const Chatbot = () => {
   const [steps, setSteps] = useState([]);
-  console.log(`steps:`, steps);
   const [userDetails, setUserDetails] = useState<UserDetails>({
     name: '',
     email: '',
@@ -132,7 +131,6 @@ const Chatbot = () => {
 
   // store user response
   useEffect(() => {
-    console.log(`userDetails:`, userDetails);
     async function fetchUserData() {
       const response = await fetch(`/api/create-user`, {
         method: 'POST',
