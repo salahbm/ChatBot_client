@@ -1,34 +1,16 @@
 'use server';
 export async function GET(request: Request) {
   try {
-    const body = await request.json();
-
-    const {
-      name,
-      email,
-      phone,
-      marketingRequirement,
-      desiredService,
-      salesDepAgreement,
-    } = body;
-
-    const response = await fetch('http://127.0.0.1:8000/user/userResponse/', {
-      method: 'POST',
+    const response = await fetch('http://127.0.0.1:8000/user/chatbotSteps/', {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        name,
-        email,
-        phone,
-        marketingRequirement,
-        desiredService,
-        salesDepAgreement,
-      }),
     });
 
     if (response.ok) {
       const data = await response.json();
+      console.log(`data:`, data);
 
       return new Response(
         JSON.stringify({

@@ -26,6 +26,8 @@ const theme = {
 };
 
 const Chatbot = () => {
+  const [steps, setSteps] = useState([]);
+
   const [userDetails, setUserDetails] = useState<UserDetails>({
     name: '',
     email: '',
@@ -49,10 +51,6 @@ const Chatbot = () => {
     if (!value || !/^\S+@\S+\.\S+$/.test(value)) {
       return 'Oops! It seems like you\'ve entered an invalid email. Please provide a valid email address.';
     } else {
-      setUserDetails((prevUserDetails) => ({
-        ...prevUserDetails,
-        email: value,
-      }));
       return true;
     }
   };
@@ -65,20 +63,19 @@ const Chatbot = () => {
     }
   };
 
-  function handleEnd(steps: any, values: any) {
-    console.log(steps);
+  function handleEnd(steps: any) {
     setUserDetails((prevUserDetails) => ({
       ...prevUserDetails,
-      name: values[0],
-      email: values[1],
-      phone: values[2],
-      marketingRequirement: values[3],
-      desiredService: values[4],
-      salesDepAgreement: values[5],
+      name: steps?.values[0],
+      email: steps?.values[1],
+      phone: steps?.values[2],
+      marketingRequirement: steps?.values[3],
+      desiredService: steps?.values[4],
+      salesDepAgreement: steps?.values[5],
     }));
   }
 
-  const steps = [
+  const step = [
     {
       id: '1',
       message: "Hello! I'm your assistant.",
@@ -156,7 +153,6 @@ const Chatbot = () => {
         },
       ],
     },
-    // Social Media Marketing
     {
       id: '10',
       message:
@@ -193,7 +189,6 @@ const Chatbot = () => {
         'Thank you for considering our services. If you have any more questions in the future, feel free to reach out. Have a great day!',
       end: true,
     },
-    // SEO
     {
       id: '11',
       message:
@@ -229,7 +224,6 @@ const Chatbot = () => {
         'Thank you for considering our services. If you have any more questions in the future, feel free to reach out. Have a great day!',
       end: true,
     },
-    // Email Marketing
     {
       id: '12',
       message:
@@ -265,7 +259,6 @@ const Chatbot = () => {
         'Thank you for considering our services. If you have any more questions in the future, feel free to reach out. Have a great day!',
       end: true,
     },
-    // Content Marketing
     {
       id: '13',
       message:
@@ -303,7 +296,6 @@ const Chatbot = () => {
     },
   ];
 
-  console.log(`userDetails:`, userDetails);
   useEffect(() => {
     async function fetchUserData() {
       const response = await fetch(`/api/create-user`, {
@@ -316,8 +308,6 @@ const Chatbot = () => {
 
       // Check if the response is ok before trying to parse JSON
       if (response.ok) {
-        const data = await response.json();
-
         // Handle successful response
         toast({
           title: 'We will reach you soon!',
@@ -325,20 +315,49 @@ const Chatbot = () => {
       }
     }
 
-    if (userDetails.desiredService) {
+    if (userDetails.salesDepAgreement) {
       // If desiredService is truthy, call fetchUserData
-      setTimeout(() => {
-        fetchUserData();
-      }, 1500);
+
+      fetchUserData();
     }
-  }, [userDetails.desiredService]);
+  }, [userDetails.salesDepAgreement]);
+
+  async function removeInvalidItems(response: any) {
+    console.log(`response:`, response.data);
+
+    return response.data.filter((item: any) => {
+      for (const key in item) {
+        if (item[key] === false || item[key] === null) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch data from your own API route
+        const response = await fetch('/api/chatbot-steps');
+        const result = await response.json();
+        const filteredResult = await removeInvalidItems(result);
+
+        console.log(`filteredResult:`, filteredResult);
+        const ids = result.data.map((item) => item);
+        console.log(ids);
+        setSteps(filteredResult);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
-      <ChatBot
-        steps={steps}
-        handleEnd={(steps: any, values: any) => handleEnd(steps, values)}
-      />
+      <ChatBot steps={step} handleEnd={(steps: string[]) => handleEnd(steps)} />
     </ThemeProvider>
   );
 };
