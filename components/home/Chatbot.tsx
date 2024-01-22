@@ -1,8 +1,8 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import ChatBot, { Step } from 'react-simple-chatbot';
+import ChatBot from 'react-simple-chatbot';
 import { ThemeProvider } from 'styled-components';
-import { useToast } from '../ui/use-toast';
+import { useToast, reducer } from '../ui/use-toast';
 
 interface UserDetails {
   name: string;
@@ -11,12 +11,6 @@ interface UserDetails {
   marketingRequirement: string;
   desiredService: string;
   salesDepAgreement: string;
-}
-
-interface Option {
-  value: string;
-  label: string;
-  trigger: string;
 }
 
 const theme = {
@@ -38,21 +32,53 @@ const Chatbot = () => {
     phone: '',
     marketingRequirement: '',
     desiredService: '',
-    salesDepAgreement: 'yes',
+    salesDepAgreement: '',
   });
 
   const { toast } = useToast();
 
-  // Function to handle user choices
-  const handleChoice = (label: string) => {
-    // Update the userDetails state with the chosen label
-    setUserDetails((prevUserDetails) => ({
-      ...prevUserDetails,
-      salesDepAgreement: label,
-    }));
+  const isValidName = (value: string) => {
+    if (!value || value.trim() === '') {
+      return 'Please provide a valid name.';
+    } else {
+      return true;
+    }
   };
 
-  const steps: any[] = [
+  const isValidEmail = (value: string) => {
+    if (!value || !/^\S+@\S+\.\S+$/.test(value)) {
+      return 'Oops! It seems like you\'ve entered an invalid email. Please provide a valid email address.';
+    } else {
+      setUserDetails((prevUserDetails) => ({
+        ...prevUserDetails,
+        email: value,
+      }));
+      return true;
+    }
+  };
+
+  const isValidPhone = (value: string) => {
+    if (!value || !/^\d{10}$/.test(value)) {
+      return 'Oops! It seems like you\'ve entered an invalid phone number. Please provide a valid phone number.';
+    } else {
+      return true;
+    }
+  };
+
+  function handleEnd(steps: any, values: any) {
+    console.log(steps);
+    setUserDetails((prevUserDetails) => ({
+      ...prevUserDetails,
+      name: values[0],
+      email: values[1],
+      phone: values[2],
+      marketingRequirement: values[3],
+      desiredService: values[4],
+      salesDepAgreement: values[5],
+    }));
+  }
+
+  const steps = [
     {
       id: '1',
       message: "Hello! I'm your assistant.",
@@ -68,15 +94,8 @@ const Chatbot = () => {
       user: true,
       trigger: '4',
       validator: (value: string) => {
-        if (!value || value.trim() === '') {
-          return 'Please provide a valid name.';
-        } else {
-          setUserDetails((prevUserDetails) => ({
-            ...prevUserDetails,
-            name: value,
-          }));
-          return true;
-        }
+        const result = isValidName(value);
+        return result;
       },
     },
     {
@@ -89,15 +108,8 @@ const Chatbot = () => {
       user: true,
       trigger: '6',
       validator: (value: string) => {
-        if (!value || !/^\S+@\S+\.\S+$/.test(value)) {
-          return 'Oops! It seems like you\'ve entered an invalid email. Please provide a valid email address.';
-        } else {
-          setUserDetails((prevUserDetails) => ({
-            ...prevUserDetails,
-            email: value,
-          }));
-          return true;
-        }
+        const result = isValidEmail(value);
+        return result;
       },
     },
     {
@@ -110,249 +122,188 @@ const Chatbot = () => {
       user: true,
       trigger: '8',
       validator: (value: string) => {
-        if (!value || !/^\d{10}$/.test(value)) {
-          return 'Oops! It seems like you\'ve entered an invalid phone number. Please provide a valid phone number.';
-        } else {
-          setUserDetails((prevUserDetails) => ({
-            ...prevUserDetails,
-            phone: value,
-          }));
-          return true;
-        }
+        const result = isValidPhone(value);
+        return result;
       },
     },
     {
       id: '8',
       message: `Excellent, ${userDetails.name}! Now, could you tell us what your primary marketing requirement is?`,
-      trigger: 'marketing_requirement_options',
+      trigger: '9',
     },
     {
-      id: 'marketing_requirement_options',
-      options: ([
+      id: '9',
+      options: [
         {
           value: 'social_media',
           label: 'Social Media Marketing',
-          trigger: 'social_media_question',
+          trigger: '10',
         },
         {
           value: 'seo',
           label: 'Search Engine Optimization (SEO)',
-          trigger: 'seo_question',
+          trigger: '11',
         },
         {
           value: 'email_marketing',
           label: 'Email Marketing',
-          trigger: 'email_marketing_question',
+          trigger: '12',
         },
         {
           value: 'content_marketing',
           label: 'Content Marketing',
-          trigger: 'content_marketing_question',
+          trigger: '13',
         },
-      ] as unknown) as Option[],
+      ],
     },
     // Social Media Marketing
     {
-      id: 'social_media_question',
-      message:
-        'Fantastic! Social Media Marketing is a powerful tool. How can we specifically assist you with it?',
-      trigger: 'get_social_media_details',
-    },
-    {
-      id: 'get_social_media_details',
-      user: true,
-      trigger: '10',
-      validator: (value: string) => {
-        if (!value || value.trim() === '') {
-          return 'Please provide a valid name.';
-        } else {
-          setUserDetails((prevUserDetails) => ({
-            ...prevUserDetails,
-            desiredService: value,
-            marketingRequirement: 'social_media',
-          }));
-          return true;
-        }
-      },
-    },
-    {
       id: '10',
       message:
+        'Fantastic! Social Media Marketing is a powerful tool. How can we specifically assist you with it?',
+      trigger: '14',
+    },
+    {
+      id: '14',
+      user: true,
+      trigger: '15',
+    },
+    {
+      id: '15',
+      message:
         "Lastly, would you like to talk to our sales department? Please reply with 'Yes' or 'No'.",
-      trigger: 'sales_department_options',
+      trigger: '16',
     },
     {
-      id: 'sales_department_options',
+      id: '16',
       options: [
-        { value: 'Yes', label: 'Yes', trigger: 'connect_to_sales' },
-        { value: 'No', label: 'No', trigger: 'goodbye_message' },
-      ] as Option[],
+        { value: 'Yes', label: 'Yes', trigger: '17' },
+        { value: 'No', label: 'No', trigger: '18' },
+      ],
     },
     {
-      id: 'connect_to_sales',
+      id: '17',
       message: 'Great choice! Please wait while we connect you to an agent.',
-      trigger: () => handleChoice('Yes'),
+
       end: true,
     },
     {
-      id: 'goodbye_message',
+      id: '18',
       message:
         'Thank you for considering our services. If you have any more questions in the future, feel free to reach out. Have a great day!',
-      trigger: () => handleChoice('No'),
       end: true,
     },
     // SEO
     {
-      id: 'seo_question',
+      id: '11',
       message:
         'Awesome! SEO is crucial for online visibility. What specifically are you looking to achieve with SEO?',
-      trigger: 'get_seo_details',
+      trigger: '19',
     },
     {
-      id: 'get_seo_details',
+      id: '19',
       user: true,
-      trigger: '12',
-      validator: (value: string) => {
-        if (!value || value.trim() === '') {
-          return 'Please provide a valid name.';
-        } else {
-          setUserDetails((prevUserDetails) => ({
-            ...prevUserDetails,
-            desiredService: value,
-            marketingRequirement: 'SEO',
-          }));
-          return true;
-        }
-      },
+      trigger: '20',
     },
     {
-      id: '12',
+      id: '20',
       message:
         "Lastly, would you like to talk to our sales department? Please reply with 'Yes' or 'No'.",
-      trigger: 'sales_department_options',
+      trigger: '21',
     },
     {
-      id: 'sales_department_options',
+      id: '21',
       options: [
-        { value: 'Yes', label: 'Yes', trigger: 'connect_to_sales' },
-        { value: 'No', label: 'No', trigger: 'goodbye_message' },
-      ] as Option[],
+        { value: 'Yes', label: 'Yes', trigger: '22' },
+        { value: 'No', label: 'No', trigger: '23' },
+      ],
     },
     {
-      id: 'connect_to_sales',
+      id: '22',
       message: 'Great choice! Please wait while we connect you to an agent.',
-      trigger: () => handleChoice('Yes'),
       end: true,
     },
     {
-      id: 'goodbye_message',
+      id: '23',
       message:
         'Thank you for considering our services. If you have any more questions in the future, feel free to reach out. Have a great day!',
-      trigger: () => handleChoice('No'),
       end: true,
     },
     // Email Marketing
     {
-      id: 'email_marketing_question',
+      id: '12',
       message:
         'Terrific! Email Marketing is a great way to connect. What are your specific goals with email marketing?',
-      trigger: 'get_email_marketing_details',
+      trigger: '24',
     },
     {
-      id: 'get_email_marketing_details',
+      id: '24',
       user: true,
-      trigger: '14',
-      validator: (value: string) => {
-        if (!value || value.trim() === '') {
-          return 'Please provide a valid name.';
-        } else {
-          setUserDetails((prevUserDetails) => ({
-            ...prevUserDetails,
-            desiredService: value,
-            marketingRequirement: 'email_marketing',
-          }));
-          return true;
-        }
-      },
+      trigger: '25',
     },
     {
-      id: '14',
+      id: '25',
       message:
         "Lastly, would you like to talk to our sales department? Please reply with 'Yes' or 'No'.",
-      trigger: 'sales_department_options',
+      trigger: '26',
     },
     {
-      id: 'sales_department_options',
+      id: '26',
       options: [
-        { value: 'Yes', label: 'Yes', trigger: 'connect_to_sales' },
-        { value: 'No', label: 'No', trigger: 'goodbye_message' },
-      ] as Option[],
+        { value: 'Yes', label: 'Yes', trigger: '27' },
+        { value: 'No', label: 'No', trigger: '28' },
+      ],
     },
     {
-      id: 'connect_to_sales',
+      id: '27',
       message: 'Great choice! Please wait while we connect you to an agent.',
-      trigger: () => handleChoice('Yes'),
       end: true,
     },
     {
-      id: 'goodbye_message',
+      id: '28',
       message:
         'Thank you for considering our services. If you have any more questions in the future, feel free to reach out. Have a great day!',
-      trigger: () => handleChoice('No'),
       end: true,
     },
     // Content Marketing
     {
-      id: 'content_marketing_question',
+      id: '13',
       message:
         'Wonderful! Content Marketing is key. What kind of content are you focusing on?',
-      trigger: 'get_content_marketing_details',
+      trigger: '29',
     },
     {
-      id: 'get_content_marketing_details',
+      id: '29',
       user: true,
-      trigger: '16',
-      validator: (value: string) => {
-        if (!value || value.trim() === '') {
-          return 'Please provide a valid name.';
-        } else {
-          setUserDetails((prevUserDetails) => ({
-            ...prevUserDetails,
-            desiredService: value,
-            marketingRequirement: 'content_marketing',
-          }));
-          return true;
-        }
-      },
+      trigger: '30',
     },
     {
-      id: '16',
+      id: '30',
       message:
         "Lastly, would you like to talk to our sales department? Please reply with 'Yes' or 'No'.",
-      trigger: 'sales_department_options',
+      trigger: '31',
     },
     {
-      id: 'sales_department_options',
+      id: '31',
       options: [
-        { value: 'Yes', label: 'Yes', trigger: 'connect_to_sales' },
-        { value: 'No', label: 'No', trigger: 'goodbye_message' },
-      ] as Option[],
+        { value: 'Yes', label: 'Yes', trigger: '32' },
+        { value: 'No', label: 'No', trigger: '33' },
+      ],
     },
     {
-      id: 'connect_to_sales',
+      id: '32',
       message: 'Great choice! Please wait while we connect you to an agent.',
-      trigger: () => handleChoice('Yes'),
       end: true,
     },
     {
-      id: 'goodbye_message',
+      id: '33',
       message:
         'Thank you for considering our services. If you have any more questions in the future, feel free to reach out. Have a great day!',
       end: true,
-      trigger: () => handleChoice('No'),
     },
   ];
 
+  console.log(`userDetails:`, userDetails);
   useEffect(() => {
     async function fetchUserData() {
       const response = await fetch(`/api/create-user`, {
@@ -384,7 +335,10 @@ const Chatbot = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <ChatBot steps={steps} />
+      <ChatBot
+        steps={steps}
+        handleEnd={(steps: any, values: any) => handleEnd(steps, values)}
+      />
     </ThemeProvider>
   );
 };
