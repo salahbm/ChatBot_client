@@ -12,20 +12,23 @@ export async function POST(request: Request) {
       salesDepAgreement,
     } = body;
 
-    const response = await fetch('http://127.0.0.1:8000/user/userResponse/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name,
-        email,
-        phone,
-        marketingRequirement,
-        desiredService,
-        salesDepAgreement,
-      }),
-    });
+    const response = await fetch(
+      `${process.env.BACKEND_URL}/user/userResponse/`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          marketingRequirement,
+          desiredService,
+          salesDepAgreement,
+        }),
+      }
+    );
 
     if (response.ok) {
       const data = await response.json();

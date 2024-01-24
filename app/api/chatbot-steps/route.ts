@@ -1,12 +1,15 @@
 'use server';
 export async function GET(request: Request) {
   try {
-    const response = await fetch('http://127.0.0.1:8000/user/chatbotSteps/', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const response = await fetch(
+      `${process.env.BACKEND_URL}/user/chatbotSteps/`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
 
     if (response.ok) {
       const data = await response.json();
