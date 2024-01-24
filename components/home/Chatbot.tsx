@@ -146,6 +146,11 @@ const Chatbot = () => {
         toast({
           title: 'We will reach you soon!',
         });
+      } else {
+        toast({
+          title: 'Oh There is an error!',
+          description: response.status,
+        });
       }
     }
 
