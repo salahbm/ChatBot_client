@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import ChatBot from 'react-simple-chatbot';
 import { ThemeProvider } from 'styled-components';
 import { useToast } from '../ui/use-toast';
+import allSteps from '../../constants/steps.json';
 
 interface UserDetails {
   name: string;
@@ -96,31 +97,26 @@ const Chatbot = () => {
 
   // remove empty steps
 
-  const removeFalseOrNullValues = (data: any) => {
-    return data.map((item: boolean) => {
-      // Use Object.entries to filter out properties with values of false or null
-      const filteredItem = Object.fromEntries(
-        Object.entries(item).filter(
-          ([key, value]) => value !== false && value !== null
-        )
-      );
+  // const removeFalseOrNullValues = (data: any) => {
+  //   return data.map((item: boolean) => {
+  //     // Use Object.entries to filter out properties with values of false or null
+  //     const filteredItem = Object.fromEntries(
+  //       Object.entries(item).filter(
+  //         ([key, value]) => value !== false && value !== null
+  //       )
+  //     );
 
-      return filteredItem;
-    });
-  };
+  //     return filteredItem;
+  //   });
+  // };
 
   // get  steps from backend
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Fetch data from your own API route
-        const response = await fetch('/api/chatbot-steps');
-        const result = await response.json();
-        const filteredResult = await constructSteps(result.data);
-        const removedUndefinedValues = await removeFalseOrNullValues(
-          filteredResult
-        );
-        setSteps(removedUndefinedValues);
+        const filteredResult = await constructSteps(allSteps);
+        setSteps(filteredResult);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
